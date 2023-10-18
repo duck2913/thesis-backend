@@ -1,16 +1,14 @@
 server:
-  port: 8080
+  port: 8082
 
 eureka:
-  instance:
-    hostname: localhost
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka
 
 spring:
   application:
-    name: user-service
+    name: order-service
 
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
@@ -26,11 +24,3 @@ spring:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
-application:
-  security:
-    jwt:
-      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-      expiration: 86400000 # a day
-      refresh-token:
-        expiration: 604800000 # 7 days

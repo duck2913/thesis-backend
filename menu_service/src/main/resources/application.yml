@@ -2,6 +2,11 @@ server:
   port: 8081
 
 spring:
+  instance:
+    hostname: localhost
+  application:
+    name: menu-service
+
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
@@ -16,3 +21,8 @@ spring:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
