@@ -20,7 +20,7 @@ public class MenuService {
         return menuRepository.findAll();
     }
     
-    public void deleteDish(Dish dish) {
-        menuRepository.delete(dish);
+    public void deleteDishById(Integer dishId) {
+        menuRepository.deleteById(dishId);
     }
 }

@@ -22,7 +22,7 @@ import static com.thesis.menu_service.util.Util.makeDirectoryIfNotExist;
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class MenuController {
-    private static String imageDirectory = System.getProperty("user.dir") + "/menu_service/src/main/resources/static/images/";
+    private static String imageDirectory = System.getProperty("user.dir") + "/menu_service/src/main/resources/static/";
     
     private final MenuService menuService;
     
@@ -53,11 +53,17 @@ public class MenuController {
                 .name(name)
                 .category(Category.valueOf(category))
                 .price(price)
-                .imgUrl("/images/" + file.getOriginalFilename())
+                .imgUrl(file.getOriginalFilename())
                 .build();
         
         menuService.createNewDish(newDish);
         return ResponseEntity.ok("menu created ." + newDish.toString());
+    }
+    
+    @DeleteMapping("/delete/{dishId}")
+    public ResponseEntity<String> deleteDish(@PathVariable int dishId) {
+        menuService.deleteDishById(dishId);
+        return ResponseEntity.ok("delete dish successfully");
     }
     
     

@@ -18,6 +18,7 @@ public class Dish {
     @GeneratedValue
     private Integer id;
     
+    @Enumerated(EnumType.STRING)
     private Category category;
     
     private String name;
