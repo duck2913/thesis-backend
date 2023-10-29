@@ -7,13 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-
-enum Status {
-    NEW,
-    COOKING,
-    DELIVERY,
-    DONE
-}
+import java.util.UUID;
 
 @Entity
 @Data
@@ -24,14 +18,11 @@ enum Status {
 public class Order {
 
     @Id
-    @GeneratedValue
-    private Integer id;
+    @Column(name = "order_id")
+    private UUID id;
 
     @Column(name = "user_id")
     private Integer userId;
-
-    @Column(name = "dish_id")
-    private Integer dishId;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -39,7 +30,8 @@ public class Order {
     @Column(name = "created_at")
     private Date createAt;
 
-    private Integer quantity;
-
     private String imageUrl;
+
+    @Column(name = "total_price")
+    private Integer totalPrice;
 }

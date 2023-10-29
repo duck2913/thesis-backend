@@ -1,6 +1,6 @@
 package com.thesis.orderservice.util;
 
-import com.thesis.orderservice.dto.DishDto;
+import com.thesis.orderservice.dto.OrderItem;
 import lombok.Data;
 
 import java.util.List;
@@ -9,8 +9,10 @@ import java.util.List;
 public class OrderRequest {
     private Integer userId;
 
-    private List<DishDto> dishes;
+    private List<OrderItem> orderItems;
 
     private String imageUrl;
-    
+
+    private Integer totalPrice;
+
 }
