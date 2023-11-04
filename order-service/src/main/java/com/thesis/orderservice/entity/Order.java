@@ -18,20 +18,29 @@ import java.util.UUID;
 public class Order {
 
     @Id
-    @Column(name = "order_id")
+    @Column(name = "order_id", columnDefinition = "BINARY(16)")
     private UUID id;
 
     @Column(name = "user_id")
     private Integer userId;
 
+    @Column(name = "shipper_id")
+    private Integer shipperId;
+
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Enumerated(EnumType.STRING)
+    private PaymentType paymentType;
+
     @Column(name = "created_at")
-    private Date createAt;
+    private Date createdAt;
 
     private String imageUrl;
 
     @Column(name = "total_price")
     private Integer totalPrice;
+
+    @Column(name = "use_delivery")
+    private Boolean useDelivery;
 }

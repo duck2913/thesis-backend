@@ -19,6 +19,7 @@ public class OrderDish {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(columnDefinition = "BINARY(16)")
     private UUID orderId;
 
     private String dishName;

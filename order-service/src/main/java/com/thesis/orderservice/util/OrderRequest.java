@@ -15,4 +15,7 @@ public class OrderRequest {
 
     private Integer totalPrice;
 
+    private Boolean useDelivery;
+
+    private String paymentType;
 }

@@ -3,15 +3,20 @@ package com.thesis.orderservice.controller;
 import com.thesis.orderservice.dto.OrderItem;
 import com.thesis.orderservice.entity.Order;
 import com.thesis.orderservice.entity.OrderDish;
+import com.thesis.orderservice.entity.PaymentType;
 import com.thesis.orderservice.entity.Status;
 import com.thesis.orderservice.service.OrderDishService;
 import com.thesis.orderservice.service.OrderService;
 import com.thesis.orderservice.util.OrderRequest;
+import com.thesis.orderservice.util.OrderResponse;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,9 +27,32 @@ public class OrderController {
 
     private final OrderDishService orderDishService;
 
+    private final ModelMapper mapper;
+
+
     @GetMapping
-    public ResponseEntity<String> getAllOrders() {
-        return ResponseEntity.ok("get orders successfully");
+    public ResponseEntity<List<OrderResponse>> getAllOrders() {
+        List<Order> allOrders = orderService.getAllOrders();
+        var result = getDishesItemsForDishes(allOrders);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<OrderResponse>> getActiveOrders() {
+        List<Order> activeOrders = orderService.getActiveOrdersForVendor();
+        var result = getDishesItemsForDishes(activeOrders);
+
+        return ResponseEntity.ok(result);
+    }
+
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<OrderResponse>> getOrdersForUser(@PathVariable Integer userId) {
+        List<Order> ordersByUserId = orderService.getOrdersByUserId(userId);
+
+        var result = getDishesItemsForDishes(ordersByUserId);
+        return ResponseEntity.ok(result);
     }
 
 
@@ -37,9 +65,11 @@ public class OrderController {
                 .id(orderId)
                 .userId(request.getUserId())
                 .status(Status.NEW)
-                .createAt(new Date())
+                .createdAt(new Date())
                 .imageUrl(request.getImageUrl())
                 .totalPrice(request.getTotalPrice())
+                .paymentType(PaymentType.valueOf(request.getPaymentType()))
+                .useDelivery(request.getUseDelivery())
                 .build();
 
         for (OrderItem orderItem : request.getOrderItems()) {
@@ -57,4 +87,28 @@ public class OrderController {
         return ResponseEntity.ok("create order successfully");
     }
 
+
+    private List<OrderResponse> getDishesItemsForDishes(List<Order> orders) {
+        List<OrderResponse> result = new ArrayList<OrderResponse>();
+
+        for (Order order : orders) {
+            UUID orderId = order.getId();
+            List<OrderDish> orderDishes = orderDishService.getOrderItemsByOrderId(orderId);
+
+            List<OrderItem> orderItems = orderDishes.stream()
+                    .map(orderDish -> mapper.map(orderDish, OrderItem.class))
+                    .toList();
+
+            System.out.println(orderItems);
+
+            OrderResponse orderResponse = OrderResponse.builder()
+                    .orderItems(orderItems)
+                    .imageUrl(order.getImageUrl())
+                    .totalPrice(order.getTotalPrice())
+                    .status(order.getStatus())
+                    .build();
+            result.add(orderResponse);
+        }
+        return result;
+    }
 }
