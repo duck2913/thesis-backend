@@ -87,6 +87,12 @@ public class OrderController {
         return ResponseEntity.ok("create order successfully");
     }
 
+    @PutMapping("/{orderId}")
+    public ResponseEntity<String> updateOrderStatus(@PathVariable UUID orderId) {
+        orderService.updateOrderStatus(orderId);
+        return ResponseEntity.ok("update order status successfully");
+    }
+
 
     private List<OrderResponse> getDishesItemsForDishes(List<Order> orders) {
         List<OrderResponse> result = new ArrayList<OrderResponse>();
@@ -102,10 +108,12 @@ public class OrderController {
             System.out.println(orderItems);
 
             OrderResponse orderResponse = OrderResponse.builder()
+                    .id(order.getId())
                     .orderItems(orderItems)
                     .imageUrl(order.getImageUrl())
                     .totalPrice(order.getTotalPrice())
                     .status(order.getStatus())
+                    .useDelivery(order.getUseDelivery())
                     .build();
             result.add(orderResponse);
         }
