@@ -17,6 +17,8 @@ import java.util.UUID;
 public class OrderResponse {
     private UUID id;
 
+    private Integer userId;
+
     private Integer totalPrice;
 
     private String imageUrl;
@@ -26,4 +28,12 @@ public class OrderResponse {
     private Status status;
 
     private Boolean useDelivery;
+
+    private Integer shipperId;
+
+    private String userAddress;
+
+    private String userName;
+
+    private String phoneNumber;
 }

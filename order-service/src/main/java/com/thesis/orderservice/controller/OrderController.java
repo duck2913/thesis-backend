@@ -1,10 +1,8 @@
 package com.thesis.orderservice.controller;
 
+import com.thesis.orderservice.client.UserServiceClient;
 import com.thesis.orderservice.dto.OrderItem;
-import com.thesis.orderservice.entity.Order;
-import com.thesis.orderservice.entity.OrderDish;
-import com.thesis.orderservice.entity.PaymentType;
-import com.thesis.orderservice.entity.Status;
+import com.thesis.orderservice.entity.*;
 import com.thesis.orderservice.service.OrderDishService;
 import com.thesis.orderservice.service.OrderService;
 import com.thesis.orderservice.util.OrderRequest;
@@ -29,6 +27,8 @@ public class OrderController {
 
     private final ModelMapper mapper;
 
+    private final UserServiceClient userServiceClient;
+
 
     @GetMapping
     public ResponseEntity<List<OrderResponse>> getAllOrders() {
@@ -46,8 +46,20 @@ public class OrderController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/delivery")
+    public ResponseEntity<List<OrderResponse>> getAllDeliveryOrders() {
+        List<Order> allDeliveryOrders = orderService.getAllOrdersForShipper();
+        var result = getDishesItemsForDishes(allDeliveryOrders);
 
-    @GetMapping("/{userId}")
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/user-service")
+    public User testWithUserServiceClient() {
+        return userServiceClient.getUserInfo(2);
+    }
+
+    @GetMapping("/orders/users/{userId}")
     public ResponseEntity<List<OrderResponse>> getOrdersForUser(@PathVariable Integer userId) {
         List<Order> ordersByUserId = orderService.getOrdersByUserId(userId);
 
@@ -93,6 +105,12 @@ public class OrderController {
         return ResponseEntity.ok("update order status successfully");
     }
 
+    @PutMapping("/{orderId}/{shipperId}")
+    public ResponseEntity<String> updateOrderStatus(@PathVariable UUID orderId, @PathVariable Integer shipperId) {
+        orderService.setShipperIdForOrder(shipperId, orderId);
+        return ResponseEntity.ok("update order status successfully");
+    }
+
 
     private List<OrderResponse> getDishesItemsForDishes(List<Order> orders) {
         List<OrderResponse> result = new ArrayList<OrderResponse>();
@@ -105,16 +123,27 @@ public class OrderController {
                     .map(orderDish -> mapper.map(orderDish, OrderItem.class))
                     .toList();
 
-            System.out.println(orderItems);
 
             OrderResponse orderResponse = OrderResponse.builder()
                     .id(order.getId())
+                    .userId(order.getUserId())
+                    .shipperId(order.getShipperId())
                     .orderItems(orderItems)
                     .imageUrl(order.getImageUrl())
                     .totalPrice(order.getTotalPrice())
                     .status(order.getStatus())
                     .useDelivery(order.getUseDelivery())
                     .build();
+
+            var userInfo = userServiceClient.getUserInfo(orderResponse.getUserId());
+            System.out.println(userInfo);
+            String userAddress = userInfo.address();
+            String userPhoneNumber = userInfo.phoneNumber();
+            String userName = userInfo.username();
+            orderResponse.setUserAddress(userAddress);
+            orderResponse.setPhoneNumber(userPhoneNumber);
+            orderResponse.setUserName(userName);
+           
             result.add(orderResponse);
         }
         return result;

@@ -25,7 +25,7 @@ public class OrderService {
     }
 
     public List<Order> getAllOrdersForShipper() {
-        return orderRepository.findByUseDeliveryTrue();
+        return orderRepository.findByUseDeliveryTrueAndStatus(Status.DELIVERY);
     }
 
     public List<Order> getActiveOrdersForVendor() {
@@ -57,5 +57,16 @@ public class OrderService {
             case DELIVERY -> Status.DONE;
             default -> throw new IllegalArgumentException("Unknown previousStatus: " + previousStatus);
         };
+    }
+
+    public void setShipperIdForOrder(Integer shipperId, UUID orderId) {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        if (optionalOrder.isPresent()) {
+            Order toBeUpdatedOrder = optionalOrder.get();
+            toBeUpdatedOrder.setShipperId(shipperId);
+            orderRepository.save(toBeUpdatedOrder);
+        } else {
+            throw new EntityNotFoundException("Entity with ID " + orderId + " not found");
+        }
     }
 }

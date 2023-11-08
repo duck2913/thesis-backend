@@ -12,7 +12,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     List<Order> findByUserIdOrderByCreatedAtDesc(Integer userId);
 
-    List<Order> findByUseDeliveryTrue();
+    List<Order> findByUseDeliveryTrueAndStatus(Status status);
 
     List<Order> findByStatusNot(Status status);
 

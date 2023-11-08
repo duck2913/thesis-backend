@@ -19,22 +19,20 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfiguration {
-    
+
     private final JwtAuthenticationFilter jwtAuthFilter;
-    
+
     private final AuthenticationProvider authenticationProvider;
-    
+
     private final LogoutHandler logoutHandler;
-    
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/api/v1/auth/**")
+                        .requestMatchers("/**")
                         .permitAll()
-                        .anyRequest()
-                        .authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
@@ -44,7 +42,7 @@ public class SecurityConfiguration {
                         .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
                 )
         ;
-        
+
         return http.build();
     }
 }
