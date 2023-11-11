@@ -11,16 +11,36 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MenuService {
     private final MenuRepository menuRepository;
-    
+
+    private final RedisService redisService;
+
     public void createNewDish(Dish newDish) {
-        menuRepository.save(newDish);
+        //update cache
+        var savedEntity = menuRepository.save(newDish);
+
+        List<Dish> allDishes = getAllDishes();
+        newDish.setId(savedEntity.getId());
+        allDishes.add(newDish);
+        redisService.saveData("menu", allDishes);
+
     }
-    
+
     public List<Dish> getAllDishes() {
-        return menuRepository.findAll();
+        var cachedMenu = redisService.getData("menu");
+        if (cachedMenu == null) {
+            List<Dish> menuFromDb = menuRepository.findAll();
+            redisService.saveData("menu", menuFromDb);
+        }
+        return redisService.getData("menu");
     }
-    
+
     public void deleteDishById(Integer dishId) {
+        //update cache
+        List<Dish> allDishes = getAllDishes();
+        allDishes.stream().filter(dish -> dish.getId() != dishId);
+
+        redisService.saveData("menu", allDishes);
+
         menuRepository.deleteById(dishId);
     }
 }
