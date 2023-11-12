@@ -5,6 +5,7 @@ import com.thesis.orderservice.entity.Status;
 import com.thesis.orderservice.repository.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,10 @@ import java.util.UUID;
 public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
+
 
     public void createNewOrder(Order newOrder) {
         orderRepository.save(newOrder);
@@ -68,5 +73,11 @@ public class OrderService {
         } else {
             throw new EntityNotFoundException("Entity with ID " + orderId + " not found");
         }
+    }
+
+
+    public void testKafka() {
+        Order testOrder = new Order();
+        kafkaTemplate.send("test", testOrder);
     }
 }

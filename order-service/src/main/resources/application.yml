@@ -1,6 +1,13 @@
 server:
   port: 8082
 
+kafka:
+  server: localhost:9092
+  group:
+    id: group1
+  producer:
+    id: producer1
+
 eureka:
   client:
     serviceUrl:

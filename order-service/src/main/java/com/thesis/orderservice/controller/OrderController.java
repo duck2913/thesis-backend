@@ -35,6 +35,7 @@ public class OrderController {
         List<Order> allOrders = orderService.getAllOrders();
         var result = getDishesItemsForDishes(allOrders);
 
+        orderService.testKafka();
         return ResponseEntity.ok(result);
     }
 
@@ -143,7 +144,7 @@ public class OrderController {
             orderResponse.setUserAddress(userAddress);
             orderResponse.setPhoneNumber(userPhoneNumber);
             orderResponse.setUserName(userName);
-           
+
             result.add(orderResponse);
         }
         return result;

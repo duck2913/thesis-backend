@@ -12,6 +12,7 @@
         <module name="order-service" />
         <module name="menu-service" />
         <module name="service-registry" />
+        <module name="notification-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -23,6 +24,7 @@
       <module name="api-gateway" options="-parameters" />
       <module name="menu-service" options="-parameters" />
       <module name="menu_service" options="-parameters" />
+      <module name="notification-service" options="-parameters" />
       <module name="order-service" options="-parameters" />
       <module name="service-registry" options="-parameters" />
       <module name="user-service" options="-parameters" />
