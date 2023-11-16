@@ -1,5 +1,6 @@
 package com.thesis.orderservice.service;
 
+import com.thesis.orderservice.dto.EventDto;
 import com.thesis.orderservice.entity.Order;
 import com.thesis.orderservice.entity.Status;
 import com.thesis.orderservice.repository.OrderRepository;
@@ -18,7 +19,7 @@ public class OrderService {
     private OrderRepository orderRepository;
 
     @Autowired
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    private KafkaTemplate<String, EventDto> kafkaTemplate;
 
 
     public void createNewOrder(Order newOrder) {
@@ -47,6 +48,15 @@ public class OrderService {
             Order toBeUpdatedOrder = optionalOrder.get();
             toBeUpdatedOrder.setStatus(getNewStatusForOrder(toBeUpdatedOrder.getStatus(), toBeUpdatedOrder.getUseDelivery()));
             orderRepository.save(toBeUpdatedOrder);
+
+            //    notifications
+            EventDto newEvent = EventDto.builder()
+                    .orderId(toBeUpdatedOrder.getId())
+                    .userId(toBeUpdatedOrder.getUserId())
+                    .message("Order: ..." + orderId.toString().substring(orderId.toString().length() - 6) + " -> current status: " + toBeUpdatedOrder.getStatus().name().toLowerCase())
+                    .build();
+
+            kafkaTemplate.send("notifications", newEvent);
         } else {
             throw new EntityNotFoundException("Entity with ID " + orderId + " not found");
         }
@@ -74,10 +84,5 @@ public class OrderService {
             throw new EntityNotFoundException("Entity with ID " + orderId + " not found");
         }
     }
-
-
-    public void testKafka() {
-        Order testOrder = new Order();
-        kafkaTemplate.send("test", testOrder);
-    }
+    
 }

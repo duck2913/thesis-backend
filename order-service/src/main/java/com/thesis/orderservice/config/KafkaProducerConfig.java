@@ -1,6 +1,6 @@
 package com.thesis.orderservice.config;
 
-import com.thesis.orderservice.entity.Order;
+import com.thesis.orderservice.dto.EventDto;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,14 +34,15 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public ProducerFactory<String, Order> producerOrderFactory() {
+    public ProducerFactory<String, EventDto> producerOrderFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
     @Bean
-    public KafkaTemplate<String, Order> kafkaTemplate() {
-        KafkaTemplate<String, Order> template = new KafkaTemplate<>(producerOrderFactory());
+    public KafkaTemplate<String, EventDto> kafkaTemplate() {
+        KafkaTemplate<String, EventDto> template = new KafkaTemplate<>(producerOrderFactory());
         template.setMessageConverter(new StringJsonMessageConverter());
         return template;
     }
+
 }

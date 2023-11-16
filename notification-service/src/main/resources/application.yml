@@ -9,6 +9,9 @@ kafka:
     id: producer1
 
 spring:
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
   instance:
     hostname: localhost
 

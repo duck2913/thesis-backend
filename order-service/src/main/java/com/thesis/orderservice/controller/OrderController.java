@@ -35,7 +35,6 @@ public class OrderController {
         List<Order> allOrders = orderService.getAllOrders();
         var result = getDishesItemsForDishes(allOrders);
 
-        orderService.testKafka();
         return ResponseEntity.ok(result);
     }
 

@@ -1,5 +1,6 @@
 package com.thesis.notificationservice.config;
 
+import com.thesis.notificationservice.dto.EventDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +26,7 @@ public class KafkaConsumerConfig {
 
     @Bean
     public KafkaListenerContainerFactory<?> factory() {
-        ConcurrentKafkaListenerContainerFactory<String, Object> factory =
+        ConcurrentKafkaListenerContainerFactory<String, EventDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         factory.setMessageConverter(new StringJsonMessageConverter());
@@ -33,7 +34,7 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public ConsumerFactory<String, Object> consumerFactory() {
+    public ConsumerFactory<String, EventDto> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs());
     }
 
